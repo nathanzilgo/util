@@ -33,6 +33,28 @@ def compress_images_in_folder(input_folder, output_folder, quality=85):
                 compress_image(input_path, output_path, quality=quality)
 
 
+def folder_size(folder):
+    """
+    Calculates the total size of all files in a folder recursively.
+    """
+    total_size = 0
+    for root, dirs, files in os.walk(folder):
+        for file in files:
+            file_path = os.path.join(root, file)
+            total_size += os.path.getsize(file_path)
+    return total_size
+
+
+def folder_size_difference(folder1, folder2):
+    """
+    Compares the sizes of two folders and prints the difference in megabytes.
+    """
+    size1 = folder_size(folder1)
+    size2 = folder_size(folder2)
+    difference_mb = abs(size1 - size2) / (1024 * 1024)  # Convert bytes to megabytes
+    print(f"Difference in size between {folder1} and {folder2}: {difference_mb:.2f} MB")
+
+
 if __name__ == "__main__":
     input_folder = os.path.abspath("")  # Update with your input folder containing images
     output_folder = os.path.abspath("")  # Update with your output folder for compressed images
@@ -40,3 +62,4 @@ if __name__ == "__main__":
 
     compress_images_in_folder(input_folder, output_folder, quality=quality)
     print("Image compression completed.")
+    folder_size_difference(input_folder, output_folder)
