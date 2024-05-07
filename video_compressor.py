@@ -1,8 +1,9 @@
+import subprocess
+import os
+
 import tkinter as tk
 from tkinter import filedialog, messagebox
 from moviepy.editor import VideoFileClip
-import os
-import subprocess
 
 
 def compress_video():
@@ -56,7 +57,7 @@ def compress_video():
         video_clip.write_videofile(
             output_filename,
             codec="libx264",  # Video codec for compression
-            preset="medium",  # Compression preset (e.g., ultrafast, superfast, faster, medium, slow)
+            preset="medium",  # Compression preset
             bitrate=f"{compression_quality}k",
             audio_codec="aac",
             threads=4,  # Number of threads for video compression
@@ -67,7 +68,8 @@ def compress_video():
             "Compression Complete", "Video compression completed successfully."
         )
         # After video compression is complete
-        subprocess.Popen(["explorer", output_filename])
+        with subprocess.Popen(["explorer", output_filename]):
+            pass
     except Exception as e:
         messagebox.showerror("Compression Error", f"Error compressing video: {e}")
 
@@ -77,7 +79,8 @@ root = tk.Tk()
 root.title("Video Compressor")
 
 # Create and pack widgets
-select_file_button = tk.Button(root, text="Select Video File", command=compress_video)
+select_file_button = tk.Button(root, text="Select Video File",
+                               command=compress_video)
 select_file_button.pack(padx=10, pady=5)
 
 quality_label = tk.Label(root, text="Select Compression Quality (kbps):")

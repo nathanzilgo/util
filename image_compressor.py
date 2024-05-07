@@ -1,5 +1,5 @@
-from PIL import Image
 import os
+from PIL import Image
 
 
 def compress_image(input_path, output_path, quality=85):
@@ -22,7 +22,7 @@ def compress_images_in_folder(input_folder, output_folder, quality=85):
     if not os.path.exists(input_folder):
         raise ValueError(f"Input folder {input_folder} does not exist.")
 
-    for root, dirs, files in os.walk(input_folder):
+    for root, _, files in os.walk(input_folder):
         print(f"Compressing images in {root}.")
         for filename in files:
             print(f"Compressing {filename}.")
@@ -44,7 +44,7 @@ def folder_size(folder):
     Calculates the total size of all files in a folder recursively.
     """
     total_size = 0
-    for root, dirs, files in os.walk(folder):
+    for root, _, files in os.walk(folder):
         for file in files:
             file_path = os.path.join(root, file)
             total_size += os.path.getsize(file_path)
@@ -62,14 +62,14 @@ def folder_size_difference(folder1, folder2):
 
 
 if __name__ == "__main__":
-    input_folder = os.path.abspath(
+    INPUT_FOLDER = os.path.abspath(
         ""
     )  # Update with your input folder containing images
-    output_folder = os.path.abspath(
+    OUTPUT_FOLDER = os.path.abspath(
         ""
     )  # Update with your output folder for compressed images
-    quality = 70  # Adjust the quality level as needed (0 to 100)
+    QUALITY = 70  # Adjust the quality level as needed (0 to 100)
 
-    compress_images_in_folder(input_folder, output_folder, quality=quality)
+    compress_images_in_folder(INPUT_FOLDER, OUTPUT_FOLDER, quality=QUALITY)
     print("Image compression completed.")
-    folder_size_difference(input_folder, output_folder)
+    folder_size_difference(INPUT_FOLDER, OUTPUT_FOLDER)
