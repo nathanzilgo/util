@@ -1,4 +1,7 @@
 import os
+import shutil
+import argparse
+from tqdm import tqdm
 from PIL import Image
 
 
@@ -22,21 +25,32 @@ def compress_images_in_folder(input_folder, output_folder, quality=85):
     if not os.path.exists(input_folder):
         raise ValueError(f"Input folder {input_folder} does not exist.")
 
-    for root, _, files in os.walk(input_folder):
+    for root, _, files in tqdm(
+        os.walk(input_folder),
+        total=len(os.listdir(input_folder)),
+        desc="Compressing images recursively",
+    ):
+
         print(f"Compressing images in {root}.")
         for filename in files:
             print(f"Compressing {filename}.")
+            input_path = os.path.join(root, filename)
+            output_path = os.path.join(
+                output_folder, os.path.relpath(input_path, input_folder)
+            )
             if (
                 filename.endswith(".jpg")
                 or filename.endswith(".jpeg")
                 or filename.endswith(".png")
             ):
-                input_path = os.path.join(root, filename)
-                output_path = os.path.join(
-                    output_folder, os.path.relpath(input_path, input_folder)
-                )
                 os.makedirs(os.path.dirname(output_path), exist_ok=True)
                 compress_image(input_path, output_path, quality=quality)
+            else:
+                print(f"{filename} is not an image file. Skipping...")
+                os.makedirs(os.path.dirname(output_path), exist_ok=True)
+                shutil.copy2(input_path, output_path)
+
+    print("Image compression completed.")
 
 
 def folder_size(folder):
@@ -61,15 +75,37 @@ def folder_size_difference(folder1, folder2):
     print(f"Difference in size between {folder1} and {folder2}: {difference_mb:.2f} MB")
 
 
-if __name__ == "__main__":
-    INPUT_FOLDER = os.path.abspath(
-        ""
-    )  # Update with your input folder containing images
-    OUTPUT_FOLDER = os.path.abspath(
-        ""
-    )  # Update with your output folder for compressed images
-    QUALITY = 70  # Adjust the quality level as needed (0 to 100)
+def main():
+    parser = argparse.ArgumentParser(
+        description="Compresses all images in a folder and saves them to another folder with specified quality."
+    )
+    parser.add_argument(
+        "-i",
+        "--input",
+        type=str,
+        required=True,
+        help="Path to the input folder containing images",
+    )
+    parser.add_argument(
+        "-o",
+        "--output",
+        type=str,
+        required=True,
+        help="Path to the output folder for compressed images",
+    )
+    parser.add_argument(
+        "-q",
+        "--quality",
+        type=int,
+        default=85,
+        help="Quality level of the compressed images (0-100)",
+    )
 
-    compress_images_in_folder(INPUT_FOLDER, OUTPUT_FOLDER, quality=QUALITY)
-    print("Image compression completed.")
-    folder_size_difference(INPUT_FOLDER, OUTPUT_FOLDER)
+    args = parser.parse_args()
+
+    compress_images_in_folder(args.input, args.output, args.quality)
+    folder_size_difference(args.input, args.output)
+
+
+if __name__ == "__main__":
+    main()
