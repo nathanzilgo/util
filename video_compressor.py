@@ -6,6 +6,28 @@ import subprocess
 
 
 def compress_video():
+    """
+    Compresses a video file using the MoviePy library.
+
+    This function prompts the user to select an input video file and an output directory.
+    It then compresses the video using the specified compression quality.
+    The compressed video is saved with the suffix "_compressed.mp4" in the output directory.
+
+    Parameters:
+        None
+
+    Returns:
+        None
+
+    Raises:
+        Exception: If there is an error compressing the video.
+
+    Dependencies:
+        - moviepy
+        - tkinter
+        - os
+        - subprocess
+    """
     # Get input video file path
     input_file_path = filedialog.askopenfilename(
         filetypes=[("Video files", "*.mp4;*.avi;*.mov")]
@@ -26,7 +48,9 @@ def compress_video():
         video_clip = VideoFileClip(input_file_path)
 
         input_filename = os.path.basename(input_file_path)
-        output_filename = os.path.join(output_directory, f"{input_filename}_compressed.mp4")
+        output_filename = os.path.join(
+            output_directory, f"{input_filename}_compressed.mp4"
+        )
 
         # Compress the video
         video_clip.write_videofile(
@@ -43,7 +67,7 @@ def compress_video():
             "Compression Complete", "Video compression completed successfully."
         )
         # After video compression is complete
-        subprocess.Popen(['explorer', output_filename])
+        subprocess.Popen(["explorer", output_filename])
     except Exception as e:
         messagebox.showerror("Compression Error", f"Error compressing video: {e}")
 

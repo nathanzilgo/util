@@ -1,3 +1,5 @@
 moviepy
 tkinter
 pillow
+pylint
+black
