@@ -12,3 +12,6 @@ format:
 
 test:
 	pytest
+
+audio_download:
+	python src/youtube_audio.py
